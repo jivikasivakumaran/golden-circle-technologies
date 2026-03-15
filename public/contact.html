@@ -68,9 +68,9 @@ nav.scrolled{padding:8px 60px;}
 .success-banner{display:none;text-align:center;padding:36px 28px;color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:24px;border:1px solid var(--border);border-radius:2px;line-height:1.5;}
 .success-banner p{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--muted);margin-top:10px;}
 .error-banner{display:none;text-align:center;padding:12px;color:#e07070;font-size:13px;border:1px solid rgba(224,112,112,.3);border-radius:2px;margin-top:10px;}
-.loc-strip{background:var(--dark);border-top:1px solid var(--border);padding:56px 60px;display:flex;align-items:center;justify-content:center;gap:56px;flex-wrap:wrap;}
+.loc-strip{background:var(--dark);border-top:1px solid var(--border);padding:56px 60px;display:grid;grid-template-columns:repeat(4,1fr);gap:32px;}
 .loc-item{display:flex;align-items:center;gap:14px;}
-.loc-item .lic{font-size:26px;}
+.loc-item .lic{font-size:26px;width:36px;flex-shrink:0;text-align:center;}
 .loc-item h4{font-size:13px;color:var(--text);margin-bottom:3px;}
 .loc-item p{font-size:12px;color:var(--muted);}
 footer{padding:36px 60px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
@@ -81,7 +81,7 @@ footer{padding:36px 60px;border-top:1px solid var(--border);display:flex;justify
 .footer-links a:hover{color:var(--gold);}
 .reveal{opacity:0;transform:translateY(34px);transition:opacity .8s ease,transform .8s ease;}
 .reveal.visible{opacity:1;transform:translateY(0);}
-@media(max-width:480px){.loc-strip{grid-template-columns:1fr;gap:16px;padding:32px 20px;}.loc-item{flex-direction:row;align-items:center;gap:14px;}.loc-item .lic{flex-shrink:0;}}
+@media(max-width:480px){.loc-strip{grid-template-columns:1fr;gap:16px;padding:32px 20px;}}
 @media(max-width:900px){
   nav{padding:10px 20px;}nav.scrolled{padding:8px 20px;}
   .hamburger{display:flex;}
@@ -93,7 +93,7 @@ footer{padding:36px 60px;border-top:1px solid var(--border);display:flex;justify
   .contact-section{grid-template-columns:1fr;gap:40px;padding:70px 24px;}
   .form-box{padding:28px 20px;}
   .form-row{grid-template-columns:1fr;}
-  .loc-strip{padding:40px 24px;gap:32px;}
+  .loc-strip{padding:40px 24px;gap:24px;grid-template-columns:1fr 1fr;}
   footer{flex-direction:column;align-items:center;text-align:center;padding:28px 24px;}
   .footer-links{flex-wrap:wrap;justify-content:center;}
 }
