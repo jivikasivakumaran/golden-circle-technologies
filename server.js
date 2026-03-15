@@ -18,6 +18,7 @@ const ALLOWED_ORIGINS = [
   'http://localhost',
   'http://localhost:3000',
   'http://127.0.0.1',
+  "https://golden-circle-technologies.onrender.com",
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
