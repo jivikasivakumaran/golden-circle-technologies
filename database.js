@@ -1,6 +1,6 @@
 /**
  * database.js
- * PostgreSQL via 'pg' package — connects to Supabase
+ * PostgreSQL via 'pg' — connects to Supabase via IPv4 pooler
  */
 
 const { Pool } = require('pg');
@@ -12,7 +12,9 @@ if (!process.env.DATABASE_URL) {
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false } // required for Supabase
+  ssl: { rejectUnauthorized: false },
+  // Required for Supabase pgbouncer/transaction mode
+  max: 1
 });
 
 // Test connection on startup
@@ -25,10 +27,30 @@ pool.connect((err, client, release) => {
   console.log('✅ Connected to Supabase PostgreSQL');
 });
 
-// ── Query helper ─────────────────────────────────────────────────────────────
+// ── Query helper ──────────────────────────────────────────────────────────────
 const query = (text, params) => pool.query(text, params);
 
-// ── Named statement functions ─────────────────────────────────────────────────
+// ── Create table if it doesn't exist ─────────────────────────────────────────
+pool.query(`
+  CREATE TABLE IF NOT EXISTS contacts (
+    id          SERIAL PRIMARY KEY,
+    uuid        TEXT NOT NULL UNIQUE,
+    first_name  TEXT NOT NULL,
+    last_name   TEXT,
+    email       TEXT NOT NULL,
+    phone       TEXT,
+    company     TEXT,
+    service     TEXT,
+    message     TEXT,
+    ip_address  TEXT,
+    user_agent  TEXT,
+    status      TEXT DEFAULT 'new',
+    created_at  TIMESTAMPTZ DEFAULT NOW()
+  )
+`).then(() => console.log('✅ contacts table ready'))
+  .catch(err => console.error('❌ Table creation error:', err.message));
+
+// ── Statement functions ───────────────────────────────────────────────────────
 const stmts = {
 
   insert: (data) => query(`
@@ -67,7 +89,6 @@ const stmts = {
   recent: (n) => query(
     `SELECT * FROM contacts ORDER BY created_at DESC LIMIT $1`, [n]
   ).then(r => r.rows)
-
 };
 
 module.exports = { pool, stmts };
