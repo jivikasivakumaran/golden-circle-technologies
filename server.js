@@ -11,20 +11,35 @@ const path    = require('path');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
-const FRONTEND_URL = process.env.FRONTEND_URL || '*';
 
-
-
+// ── Allowed origins
+const ALLOWED_ORIGINS = [
+  'https://goldencircletechnologies.netlify.app',
+  'http://localhost',
+  'http://localhost:3000',
+  'http://127.0.0.1',
+  process.env.FRONTEND_URL
+].filter(Boolean);
 
 // ── Security headers
 app.use(helmet({ contentSecurityPolicy: false }));
 
-// ── CORS — only allow your frontend domain
+// ── CORS — handle preflight + actual requests
 app.use(cors({
-  origin: FRONTEND_URL === '*' ? '*' : [FRONTEND_URL, 'http://localhost'],
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type']
+  origin: function(origin, callback) {
+    // Allow requests with no origin (Postman, curl, mobile apps)
+    if (!origin) return callback(null, true);
+    if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+    return callback(new Error('CORS: origin not allowed — ' + origin));
+  },
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200
 }));
+
+// ── Explicitly handle OPTIONS preflight for ALL routes
+app.options('*', cors());
 
 // ── Body parser
 app.use(express.json({ limit: '10kb' }));
@@ -51,7 +66,7 @@ app.use((req, res) => {
 
 // ── Global error handler
 app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err);
+  console.error('Unhandled error:', err.message);
   res.status(500).json({ success: false, message: 'Internal server error' });
 });
 
