@@ -1,6 +1,6 @@
 /**
  * routes/contact.js
- * POST /api/contact — saves form submissions to SQLite
+ * POST /api/contact — saves form submissions to Supabase
  */
 
 const express = require('express');
@@ -30,14 +30,12 @@ router.post('/', async (req, res) => {
               || req.socket.remoteAddress
               || 'unknown';
 
-    // Rate limit
     if (!rateOk(ip)) {
       return res.status(429).json({ success: false, message: 'Too many submissions. Please try again later.' });
     }
 
     const { firstName, lastName, email, phone, company, service, message } = req.body;
 
-    // Validate
     if (!firstName?.trim()) {
       return res.status(400).json({ success: false, message: 'First name is required.' });
     }
@@ -45,7 +43,6 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ success: false, message: 'A valid email address is required.' });
     }
 
-    // Save to DB
     await stmts.insert({
       uuid:      uuidv4(),
       firstName: firstName.trim(),
@@ -65,11 +62,10 @@ router.post('/', async (req, res) => {
     });
 
   } catch (err) {
-    // Log full error on server, send safe message to client
-    console.error('❌ /api/contact error:', err.message, err.stack);
+    console.error('❌ /api/contact error:', err.message);
     return res.status(500).json({
       success: false,
-      message: 'Something went wrong on our end. Please email us directly at goldencircletechnologies123@gmail.com'
+      message: 'Something went wrong. Please email us at goldencircletechnologies123@gmail.com'
     });
   }
 });
