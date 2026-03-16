@@ -120,6 +120,7 @@ const sendAdminEmail = (data) => {
   return transporter.sendMail({
     from: `"GoldenCircle Form" <${process.env.GMAIL_USER}>`,
     to: process.env.GMAIL_USER,
+    replyTo: data.email,
     subject: `🔔 New Contact Form Submission — ${data.firstName} ${data.lastName || ''}`,
     html: `
       <!DOCTYPE html>
